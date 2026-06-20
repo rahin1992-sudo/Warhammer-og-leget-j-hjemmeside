@@ -5,6 +5,8 @@ fx til platfod (flade fødder). Brugeren optager en video af foden, indtaster
 nogle mål, ser en 3D-forhåndsvisning, og får en **STL-fil** sendt til mail
 (eller downloader den direkte) klar til at blive printet i fleksibelt TPU.
 
+> 👉 Trin-for-trin guide til daglig brug: se **[BRUGSVEJLEDNING.md](BRUGSVEJLEDNING.md)**.
+
 ## Sådan virker det
 
 1. **Video** (valgfrit) – en kort video af foden der sendes med som reference.
