@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="da">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>TPU Indlægssål – Fodscanner</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>🦶 TPU Indlægssål</h1>
+      <p class="subtitle">Optag en video af foden, indtast nogle mål, og få en 3D-printbar sål sendt til mail.</p>
+    </header>
+
+    <main>
+      <!-- TRIN 1: VIDEO -->
+      <section class="card">
+        <h2><span class="step">1</span> Optag video af foden</h2>
+        <p class="hint">
+          Hold foden i ro på et neutralt underlag. Bevæg kameraet langsomt rundt om
+          foden (hæl, indersiden, oversiden, ydersiden) i 10–20 sekunder, så hele
+          foden ses tydeligt. Videoen sendes med, så foden kan vurderes.
+        </p>
+
+        <div class="video-wrap">
+          <video id="preview" playsinline muted autoplay></video>
+          <video id="playback" playsinline controls hidden></video>
+        </div>
+
+        <div class="row">
+          <button id="startCam" class="btn">📷 Tænd kamera</button>
+          <button id="recBtn" class="btn primary" disabled>● Optag</button>
+          <span id="recTime" class="rec-time" hidden>00:00</span>
+        </div>
+        <div class="row">
+          <label class="file-label">
+            …eller upload en video
+            <input id="videoFile" type="file" accept="video/*" hidden />
+          </label>
+          <span id="videoStatus" class="status-inline"></span>
+        </div>
+      </section>
+
+      <!-- TRIN 2: MÅL -->
+      <section class="card">
+        <h2><span class="step">2</span> Mål og indstillinger</h2>
+
+        <div class="grid">
+          <label>
+            Navn / note
+            <input id="name" type="text" placeholder="fx 'Sara venstre'" />
+          </label>
+
+          <label>
+            Hvilken fod?
+            <select id="side">
+              <option value="left">Venstre</option>
+              <option value="right">Højre</option>
+            </select>
+          </label>
+
+          <label>
+            Sko-størrelse (EU)
+            <input id="shoeSize" type="number" min="20" max="50" step="0.5" value="38" />
+            <small>Udfylder fodlængden automatisk (kan rettes).</small>
+          </label>
+
+          <label>
+            Fodlængde (mm)
+            <input id="length" type="number" min="150" max="360" step="1" value="240" />
+            <small>Hæl til længste tå.</small>
+          </label>
+
+          <label>
+            Fodbredde (mm)
+            <input id="width" type="number" min="60" max="160" step="1" value="95" />
+            <small>Bredeste sted (ballen af foden).</small>
+          </label>
+
+          <label>
+            Svangtype
+            <select id="archType">
+              <option value="flat">Platfod (flad)</option>
+              <option value="low">Lav svang</option>
+              <option value="neutral">Neutral</option>
+              <option value="high">Høj svang</option>
+            </select>
+          </label>
+
+          <label class="slider">
+            Svangstøtte: <b id="archHeightVal">16</b> mm
+            <input id="archHeight" type="range" min="0" max="28" step="1" value="16" />
+            <small>Højere = mere støtte under svangen.</small>
+          </label>
+
+          <label class="slider">
+            Hælkop: <b id="heelCupVal">9</b> mm
+            <input id="heelCup" type="range" min="0" max="18" step="1" value="9" />
+            <small>Dybere kop = mere stabil hæl.</small>
+          </label>
+
+          <label class="slider">
+            Mellemfodsstøtte: <b id="metPadVal">3.5</b> mm
+            <input id="metPad" type="range" min="0" max="10" step="0.5" value="3.5" />
+          </label>
+
+          <label class="slider">
+            Basistykkelse: <b id="baseThicknessVal">3</b> mm
+            <input id="baseThickness" type="range" min="1.5" max="6" step="0.5" value="3" />
+          </label>
+        </div>
+      </section>
+
+      <!-- TRIN 3: PREVIEW -->
+      <section class="card">
+        <h2><span class="step">3</span> 3D-forhåndsvisning</h2>
+        <div id="viewer"></div>
+        <p class="hint">Træk for at rotere · scroll/knib for at zoome. Modellen opdateres når du ændrer mål.</p>
+      </section>
+
+      <!-- TRIN 4: SEND -->
+      <section class="card">
+        <h2><span class="step">4</span> Færdiggør</h2>
+        <div class="row">
+          <button id="downloadBtn" class="btn">⬇️ Download STL</button>
+          <button id="sendBtn" class="btn primary">✉️ Send til 3D-print</button>
+        </div>
+        <p id="result" class="result"></p>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        Bemærk: sålen genereres ud fra dine mål (ikke en præcis 3D-rekonstruktion af videoen).
+        Videoen sendes med som reference, så foden kan vurderes manuelt. Print i fleksibelt TPU.
+      </p>
+    </footer>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
