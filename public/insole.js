@@ -117,6 +117,25 @@ export function buildInsoleGeometry(params, mirror = false) {
   const L = p.length;
   const halfMaxW = p.width / 2;
 
+  // Et skannet omrids skaleres så dets bredeste sted matcher den (evt. manuelt
+  // rettede) bredde i p.width. Dermed virker bredde-feltet stadig efter et scan,
+  // og længden styres uændret af p.length via x = u * L.
+  if (p.outline) {
+    let maxW = 0;
+    for (let i = 0; i < p.outline.medial.length; i++) {
+      maxW = Math.max(maxW, p.outline.medial[i] - p.outline.lateral[i]);
+    }
+    if (maxW > 1e-6) {
+      const f = p.width / maxW;
+      if (Math.abs(f - 1) > 1e-6) {
+        p.outline = {
+          medial: p.outline.medial.map((v) => v * f),
+          lateral: p.outline.lateral.map((v) => v * f),
+        };
+      }
+    }
+  }
+
   // Kant-funktion: giver lateral (v=0) og medial (v=1) y-koordinat i mm.
   // Hvis der er et skannet omrids bruges det; ellers det symmetriske profil.
   function edges(u) {

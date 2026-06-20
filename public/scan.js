@@ -122,6 +122,15 @@ export function initScan(container, { onResult, getSide }) {
         state.scan = null;
         state.taps = [];
         state.tapMode = false;
+        // Nulstil også svang/fodaftryk, så gamle resultater ikke følger med
+        // et nyt scan.
+        state.arch = null;
+        state.printBlob = null;
+        const pc = printCanvas.getContext("2d");
+        pc.clearRect(0, 0, printCanvas.width, printCanvas.height);
+        $("printAnalyze").disabled = true;
+        $("printStatus").textContent = "";
+        $("rArch").textContent = "(ikke målt)";
         drawBase();
         $("scanMeasure").disabled = false;
         $("scanTap").disabled = false;
