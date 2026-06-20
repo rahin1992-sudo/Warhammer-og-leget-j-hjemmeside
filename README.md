@@ -7,20 +7,37 @@ nogle mål, ser en 3D-forhåndsvisning, og får en **STL-fil** sendt til mail
 
 ## Sådan virker det
 
-1. **Video** – appen optager (eller man uploader) en kort video af foden.
-   Videoen bruges som *reference* og sendes med i mailen, så foden kan
-   vurderes manuelt.
-2. **Mål** – fodlængde, fodbredde, svangtype (platfod/lav/neutral/høj),
-   svangstøtte, hælkop osv. Sko-størrelse kan auto-udfylde længden.
-3. **Generér** – ud fra målene bygges en parametrisk, ortopædisk sål med
-   medial svangstøtte, dyb hælkop og mellemfodsstøtte. Geometrien er lukket
-   (watertight), så STL'en kan slices direkte.
-4. **Send/Download** – STL'en (+ video) sendes til din mail, eller hentes lokalt.
+1. **Video** (valgfrit) – en kort video af foden der sendes med som reference.
+2. **Scan automatisk (FootScan)** – tag et foto lige ovenfra af foden med et
+   **referencekort** (fx sygesikringskort) ved siden af. Appen bruger computer
+   vision (OpenCV.js) til at:
+   - finde referencekortet og dermed den rigtige **målestok** (mm pr. pixel),
+   - segmentere foden og udtrække dens **rigtige omrids**,
+   - måle **længde og bredde** automatisk,
+   - (valgfrit) analysere et **fodaftryk** og beregne svangindekset
+     (Chippaux-Smirak) → klassificere flad/normal/høj svang.
+3. **Mål** – felterne udfyldes automatisk fra scanningen (kan altid rettes):
+   fodlængde, fodbredde, svangtype, svangstøtte, hælkop osv.
+4. **Generér** – der bygges en ortopædisk sål formet efter fodens **faktiske
+   omrids**, med medial svangstøtte, dyb hælkop og mellemfodsstøtte. Geometrien
+   er lukket (watertight), så STL'en kan slices direkte.
+5. **Send/Download** – STL'en (+ video + scan-fotos) sendes til din mail, eller
+   hentes lokalt.
 
-> **Ærlig forventningsafstemning:** Dette er *ikke* en præcis 3D-rekonstruktion
-> af foden fra videoen (ægte fotogrammetri kræver tung billedbehandling/ML).
-> Sålen genereres ud fra de indtastede mål, og videoen er en visuel reference.
-> Det giver i praksis en god, brugbar støttesål – især for platfod.
+> **Ærlig forventningsafstemning:** Dette er ikke en fuld fotogrammetrisk 3D-
+> rekonstruktion (det kræver LiDAR eller en tung GPU-server). I stedet *måles*
+> foden automatisk fra billeder med et referenceobjekt for skala — i praksis
+> samme tilgang som de fleste "scan din fod"-apps. Resultatet vises som overlay
+> på fotoet, så du kan tjekke det, og alle mål kan finjusteres manuelt bagefter.
+
+### Tips til et godt scan-foto
+
+- Skyd **lige ovenfra**, så lidt forvrængning som muligt.
+- Læg referencekortet **fladt** i samme plan som foden (på gulvet/papiret).
+- God, jævn belysning og **kontrast** mellem fod og underlag (fx bar fod eller
+  mørk sok på lyst gulv/papir).
+- **Tæerne opad** i billedet, foden nogenlunde centreret.
+- Hvis kortet ikke findes automatisk, kan du **tappe dets 4 hjørner** i appen.
 
 ## Kom i gang
 

@@ -156,6 +156,31 @@ footer {
   text-align: center;
 }
 
+/* --- Scan / FootScan --- */
+.scan-ref { display: flex; flex-direction: column; gap: 5px; font-size: 0.85rem; color: var(--muted); margin-bottom: 12px; }
+.scan-ref select {
+  background: var(--card2); border: 1px solid var(--border); color: var(--text);
+  padding: 9px 10px; border-radius: 8px; font-size: 0.95rem;
+}
+.scan-stage {
+  width: 100%; background: #000; border-radius: 10px; overflow: hidden;
+  margin-bottom: 10px; display: flex; justify-content: center;
+}
+.scan-stage.small { background: #0c1014; }
+.scan-stage video, .scan-stage canvas { max-width: 100%; height: auto; display: block; }
+.scan-stage canvas { cursor: crosshair; touch-action: manipulation; }
+
+.scan-results { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+.scan-readout { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.scan-readout > div {
+  flex: 1; min-width: 90px; background: var(--card2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 12px; text-align: center;
+}
+.scan-readout span { display: block; font-size: 0.75rem; color: var(--muted); }
+.scan-readout b { font-size: 1.05rem; color: var(--accent); }
+.scan-arch { margin: 6px 0 14px; }
+.scan-arch summary { cursor: pointer; color: var(--text); font-size: 0.92rem; padding: 6px 0; }
+
 @media (max-width: 560px) {
   .grid { grid-template-columns: 1fr; }
 }
