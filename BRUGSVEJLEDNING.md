@@ -1,59 +1,71 @@
 # Brugsvejledning – TPU Indlægssål
 
-Sådan laver du en 3D-printet indlægssål fra start til slut. Vejledningen er
-delt i to: **opsætning** (gøres én gang på en computer) og **daglig brug**
-(det du/din kone gør hver gang, I vil lave en sål).
+Sådan laver du en 3D-printet indlægssål fra start til slut.
+
+**Hele forløbet kan foregå på en telefon:** man filmer foden, tager billederne
+og uploader det hele i appen – der skal ikke bruges en computer undervejs. Det
+eneste, der skal gøres én gang, er at lægge appen online (så telefonen kan åbne
+den via et link). Det beskrives i Del 1.
 
 ---
 
-## Del 1: Opsætning (én gang)
+## Del 1: Læg appen online (én gang) – så den kan bruges fra telefon
 
-Du skal bruge en computer med **Node.js 18+** installeret
-(hentes på https://nodejs.org).
+For at telefonens kamera/upload virker, skal appen køre på en adresse med
+**HTTPS**. Den nemmeste vej er gratis hosting på **Render.com** (repoet
+indeholder allerede en `render.yaml`, så det er næsten automatisk):
 
-1. Hent programmet og start det. Åbn en terminal og skriv:
+1. Sørg for at koden er på GitHub (det er den allerede).
+2. Opret en gratis konto på https://render.com.
+3. Tryk **New +** → **Blueprint**, og vælg dette repo. Render læser
+   `render.yaml` og opretter web-servicen automatisk.
+4. Udfyld de hemmelige felter, så mailen kan sendes (se "Mail" nedenfor):
+   `SMTP_USER` og `SMTP_PASS`.
+5. Når den er deployet, får du en URL som `https://tpu-indlaegssaal.onrender.com`.
+   **Åbn den URL på telefonen** (gem den evt. på hjemmeskærmen) – så er I klar.
 
-   ```bash
-   git clone https://github.com/rahin1992-sudo/Warhammer-og-leget-j-hjemmeside.git
-   cd Warhammer-og-leget-j-hjemmeside
-   npm install
-   npm start
-   ```
+> _Indsæt skærmbillede af appen åbnet på telefonen her._
 
-   > Hvis koden ligger på din feature-branch og ikke `main`, så kør
-   > `git checkout claude/foot-video-insole-generator-jtxhjc` før `npm install`.
+### Mail (så STL'en sendes til dig automatisk)
 
-2. Når der står `kører på http://localhost:3000` i terminalen, så åbn den
-   adresse i en browser (Chrome/Edge/Safari). Så er appen klar.
-
-   > _Indsæt evt. skærmbillede af forsiden her._
-
-### (Valgfrit) Slå mail-afsendelse til
-
-Vil du have STL'en sendt automatisk til din mail, skal du sætte SMTP op:
-
-1. Lav en kopi af filen `.env.example`, og kald kopien `.env`.
-2. Brug en Gmail-konto med et **App Password**
+1. Brug en Gmail-konto med et **App Password**
    (https://myaccount.google.com/apppasswords – kræver 2-trinsbekræftelse).
-3. Udfyld i `.env`:
+2. Sæt disse i Render-dashboardet under servicens **Environment**:
+   - `SMTP_USER` = din-gmail@gmail.com
+   - `SMTP_PASS` = dit app-password
+   - (`ORDER_EMAIL_TO`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE` er sat på forhånd.)
 
-   ```env
-   ORDER_EMAIL_TO=rahin1992@gmail.com
-   SMTP_HOST=smtp.gmail.com
-   SMTP_PORT=465
-   SMTP_SECURE=true
-   SMTP_USER=din-gmail@gmail.com
-   SMTP_PASS=dit-app-password
-   ```
+> Uden mail virker knappen **"Download STL"** stadig, så man kan gemme filen
+> manuelt. På hosting er mail dog den rigtige vej, da serverens filer ikke gemmes
+> permanent.
 
-4. Stop appen (Ctrl+C) og start den igen med `npm start`.
+### Alternativ: test lokalt på en computer
 
-> Uden mail-opsætning gemmes hver ordre i mappen `orders/`, og knappen
-> **"Download STL" virker altid** – så du kan sagtens komme i gang med det samme.
+Vil du bare teste på din egen computer (Node.js 18+):
+
+```bash
+git clone https://github.com/rahin1992-sudo/Warhammer-og-leget-j-hjemmeside.git
+cd Warhammer-og-leget-j-hjemmeside
+npm install
+cp .env.example .env   # udfyld mail-felterne
+npm start              # åbn http://localhost:3000
+```
+
+Vil du teste fra telefonen mod din computer (så kameraet virker), kan du lave en
+HTTPS-tunnel: `npx ngrok http 3000` og åbne den viste `https://…`-adresse på
+telefonen.
 
 ---
 
-## Del 2: Daglig brug (lav en sål)
+## Del 2: Daglig brug (lav en sål) – fra telefonen
+
+Åbn appens link på telefonen. Hele forløbet kan klares her: man **filmer og
+fotograferer med telefonen og uploader det i appen**. Når man trykker på en
+upload-knap, åbner telefonen automatisk kameraet (eller billedrullen), så man
+kan optage/tage billedet og sende det med det samme.
+
+> På et hostet link (HTTPS) virker også "📷 Kamera"-knapperne, der filmer/tager
+> billede direkte inde i appen. Begge veje virker – brug den, der er nemmest.
 
 Du laver **én sål ad gangen** – én til venstre fod og én til højre.
 
@@ -63,14 +75,16 @@ Du laver **én sål ad gangen** – én til venstre fod og én til højre.
 - Godt, jævnt lys.
 
 ### Trin 1 – Video (valgfrit)
-Optag eller upload en kort video af foden. Den bruges kun som reference og
-sendes med i mailen.
+Film foden med telefonen og upload videoen (eller brug "📷 Kamera"). Den bruges
+kun som reference og sendes med i mailen.
 
 ### Trin 2 – Scan foden automatisk ⭐ (det vigtigste)
 1. Vælg **referenceobjekt** øverst (fx sygesikringskort).
 2. Læg kortet **fladt ved siden af foden** i samme plan (på gulvet/papiret).
-3. Tag et foto **lige ovenfra**, med **tæerne opad** og foden midt i billedet.
-   - Tryk **📷 Kamera → Tag billede**, eller **upload foto**.
+3. Tag et foto **lige ovenfra** med telefonen, med **tæerne opad** og foden
+   midt i billedet.
+   - Tryk **upload foto** (åbner telefonens kamera), eller **📷 Kamera → Tag
+     billede**.
 4. Tryk **🔍 Find mål automatisk**.
    - Appen finder kortet (målestok) og tegner fodens **omrids** ovenpå fotoet,
      og udfylder **længde** og **bredde**.
@@ -94,8 +108,8 @@ sendes med i mailen.
 Drej og zoom på modellen, og se at sålen ser fornuftig ud.
 
 ### Trin 5 – Færdiggør
-- **✉️ Send til 3D-print** → sender STL + fotos til mailen, **eller**
-- **⬇️ Download STL** → gemmer filen på computeren.
+- **✉️ Send til 3D-print** → sender STL + video + fotos til din mail, **eller**
+- **⬇️ Download STL** → gemmer filen på telefonen.
 
 Gentag derefter trin 2–5 for den **anden fod**.
 

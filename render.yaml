@@ -1,0 +1,36 @@
+# Render.com blueprint – hoster appen online med HTTPS, så den kan bruges
+# direkte fra en telefon (https://render.com).
+#
+# Fremgang:
+#   1. Push koden til GitHub (allerede gjort).
+#   2. Opret en gratis konto på render.com -> "New +" -> "Blueprint".
+#   3. Vælg dette repo. Render læser denne fil og opretter web-servicen.
+#   4. Udfyld de hemmelige miljøvariabler (SMTP_USER/SMTP_PASS m.fl.) i
+#      Render-dashboardet, så mailen kan sendes.
+#   5. Når den er deployet, får du en URL som https://<navn>.onrender.com
+#      - åbn den på telefonen.
+#
+# Bemærk: filsystemet på free-planen er flygtigt, så brug mail-afsendelsen
+# (SMTP) til levering - den lokale "orders/"-mappe overlever ikke genstart.
+services:
+  - type: web
+    name: tpu-indlaegssaal
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: ORDER_EMAIL_TO
+        value: rahin1992@gmail.com
+      - key: ORDER_EMAIL_FROM
+        value: indlaegssaal-app@example.com
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "465"
+      - key: SMTP_SECURE
+        value: "true"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false

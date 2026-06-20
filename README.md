@@ -51,13 +51,20 @@ npm start
 
 Åbn derefter **http://localhost:3000**.
 
-### Brug på telefon (anbefales til kamera)
+### Brug fra telefon (anbefalet) – læg appen online
 
-Kør serveren på din computer og åbn `http://<computerens-ip>:3000` på
-telefonen (samme netværk). Bemærk: browserens kamera kræver ofte **HTTPS**
-eller `localhost`. Den nemmeste vej er at hoste appen et sted med HTTPS,
-eller bruge en tunnel (fx `ngrok http 3000`) når du tester på telefon.
-Man kan altid bruge "upload en video" i stedet for live-optagelse.
+Hele forløbet (film, foto, upload) kan klares på en telefon, men appen skal
+køre på en **HTTPS-adresse**, før telefonens kamera/upload virker. Nemmest med
+gratis hosting på **Render.com** – repoet indeholder en `render.yaml`:
+
+1. Opret konto på https://render.com → **New +** → **Blueprint** → vælg dette repo.
+2. Render læser `render.yaml` og opretter servicen. Udfyld `SMTP_USER` og
+   `SMTP_PASS` i dashboardet.
+3. Åbn den genererede `https://…onrender.com`-adresse på telefonen.
+
+Vil du teste fra telefon mod din egen computer i stedet, kan du lave en tunnel:
+`npx ngrok http 3000`. Upload-knapperne (video/foto) åbner telefonens kamera, så
+man kan optage og uploade i én handling.
 
 ## Mail-opsætning (så STL'en sendes automatisk)
 
