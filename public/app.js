@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { STLExporter } from "three/addons/exporters/STLExporter.js";
 import { buildInsoleGeometry } from "./insole.js";
+import { initScan } from "./scan.js";
 
 // ---------------------------------------------------------------------------
 //  State
@@ -12,6 +13,8 @@ let recordedChunks = [];
 let recordedBlob = null; // den endelige video (optaget eller uploadet)
 let recTimer = null;
 let recSeconds = 0;
+let scannedOutline = null; // fodens omrids fra automatisk scanning
+let scanPhotos = []; // fotos brugt til scanning (sendes med i mailen)
 
 const $ = (id) => document.getElementById(id);
 
@@ -163,6 +166,7 @@ function readParams() {
     heelCup: Number($("heelCup").value),
     metPad: Number($("metPad").value),
     baseThickness: Number($("baseThickness").value),
+    outline: scannedOutline,
   };
 }
 
@@ -281,6 +285,13 @@ $("sendBtn").addEventListener("click", async () => {
   btn.disabled = true;
   setResult("Genererer og sender…", "busy");
 
+  // På gratis hosting kan serveren "sove" – vis en venlig besked hvis det
+  // trækker ud, så ventetiden ikke ligner en fejl.
+  const wakeTimer = setTimeout(
+    () => setResult("Serveren vågner op – det kan tage op til ~30 sek. første gang. Vent venligst…", "busy"),
+    4000
+  );
+
   try {
     const stlBlob = exportStlBlob();
     const params = readParams();
@@ -291,8 +302,13 @@ $("sendBtn").addEventListener("click", async () => {
       const ext = (recordedBlob.type.split("/")[1] || "webm").split(";")[0];
       fd.append("video", recordedBlob, `fod-video.${ext}`);
     }
+    scanPhotos.forEach((blob, i) => {
+      const ext = (blob.type.split("/")[1] || "jpg").split(";")[0];
+      fd.append("photos", blob, `scan-${i + 1}.${ext}`);
+    });
 
     const res = await fetch("/api/order", { method: "POST", body: fd });
+    clearTimeout(wakeTimer);
     const data = await res.json();
     if (!res.ok || !data.ok) throw new Error(data.error || "Serverfejl");
 
@@ -304,6 +320,7 @@ $("sendBtn").addEventListener("click", async () => {
   } catch (err) {
     setResult("❌ Kunne ikke sende: " + err.message + " — prøv 'Download STL' i stedet.", "err");
   } finally {
+    clearTimeout(wakeTimer);
     btn.disabled = false;
   }
 });
@@ -315,3 +332,30 @@ function setResult(msg, cls) {
 }
 
 if (!recordedBlob) setVideoStatus("Ingen video endnu (valgfrit, men anbefales).");
+
+// ---------------------------------------------------------------------------
+//  Automatisk scanning (FootScan)
+// ---------------------------------------------------------------------------
+initScan(document.getElementById("scanRoot"), {
+  getSide: () => $("side").value,
+  onResult: (m, outline, photos) => {
+    if (m.length) {
+      $("length").value = Math.round(m.length);
+    }
+    if (m.width) {
+      $("width").value = Math.round(m.width);
+    }
+    if (m.archType) {
+      $("archType").value = m.archType;
+    }
+    if (m.archHeight != null) {
+      $("archHeight").value = m.archHeight;
+      $("archHeightVal").textContent = m.archHeight;
+    }
+    scannedOutline = outline || null;
+    scanPhotos = photos || [];
+    $("scanNote").hidden = false;
+    scheduleUpdate();
+    document.getElementById("viewer").scrollIntoView({ behavior: "smooth", block: "center" });
+  },
+});

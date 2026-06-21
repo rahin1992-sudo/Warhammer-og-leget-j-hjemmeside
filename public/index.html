@@ -49,9 +49,21 @@
         </div>
       </section>
 
-      <!-- TRIN 2: MÅL -->
+      <!-- TRIN 2: SCAN -->
       <section class="card">
-        <h2><span class="step">2</span> Mål og indstillinger</h2>
+        <h2><span class="step">2</span> Scan foden automatisk</h2>
+        <p class="hint">
+          Lad appen måle foden ud fra et foto med et referencekort – så bliver
+          længde, bredde og fodens omrids udfyldt automatisk. Du kan altid rette
+          tallene i trin 3 bagefter, eller springe scanningen over og måle manuelt.
+        </p>
+        <div id="scanRoot"></div>
+      </section>
+
+      <!-- TRIN 3: MÅL -->
+      <section class="card">
+        <h2><span class="step">3</span> Mål og indstillinger</h2>
+        <p class="hint" id="scanNote" hidden>✅ Udfyldt fra automatisk scanning – tjek og finjustér gerne.</p>
 
         <div class="grid">
           <label>
@@ -119,16 +131,16 @@
         </div>
       </section>
 
-      <!-- TRIN 3: PREVIEW -->
+      <!-- TRIN 4: PREVIEW -->
       <section class="card">
-        <h2><span class="step">3</span> 3D-forhåndsvisning</h2>
+        <h2><span class="step">4</span> 3D-forhåndsvisning</h2>
         <div id="viewer"></div>
         <p class="hint">Træk for at rotere · scroll/knib for at zoome. Modellen opdateres når du ændrer mål.</p>
       </section>
 
-      <!-- TRIN 4: SEND -->
+      <!-- TRIN 5: SEND -->
       <section class="card">
-        <h2><span class="step">4</span> Færdiggør</h2>
+        <h2><span class="step">5</span> Færdiggør</h2>
         <div class="row">
           <button id="downloadBtn" class="btn">⬇️ Download STL</button>
           <button id="sendBtn" class="btn primary">✉️ Send til 3D-print</button>

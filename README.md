@@ -5,22 +5,52 @@ fx til platfod (flade fødder). Brugeren optager en video af foden, indtaster
 nogle mål, ser en 3D-forhåndsvisning, og får en **STL-fil** sendt til mail
 (eller downloader den direkte) klar til at blive printet i fleksibelt TPU.
 
+> 👉 Trin-for-trin guide til daglig brug: se **[BRUGSVEJLEDNING.md](BRUGSVEJLEDNING.md)**.
+
+## 🚀 Læg appen online med ét klik (anbefalet – kræver ikke GitHub-viden)
+
+Tryk på knappen, log ind med GitHub, og følg trinnene. Render bygger appen
+automatisk og giver dig et `https://…onrender.com`-link, du kan åbne på telefonen:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/rahin1992-sudo/Warhammer-og-leget-j-hjemmeside)
+
+Til sidst skal du udfylde to felter i Render (så mailen kan sendes):
+`SMTP_USER` (din Gmail) og `SMTP_PASS` (et Gmail App Password – se afsnittet
+"Mail-opsætning" nedenfor).
+
 ## Sådan virker det
 
-1. **Video** – appen optager (eller man uploader) en kort video af foden.
-   Videoen bruges som *reference* og sendes med i mailen, så foden kan
-   vurderes manuelt.
-2. **Mål** – fodlængde, fodbredde, svangtype (platfod/lav/neutral/høj),
-   svangstøtte, hælkop osv. Sko-størrelse kan auto-udfylde længden.
-3. **Generér** – ud fra målene bygges en parametrisk, ortopædisk sål med
-   medial svangstøtte, dyb hælkop og mellemfodsstøtte. Geometrien er lukket
-   (watertight), så STL'en kan slices direkte.
-4. **Send/Download** – STL'en (+ video) sendes til din mail, eller hentes lokalt.
+1. **Video** (valgfrit) – en kort video af foden der sendes med som reference.
+2. **Scan automatisk (FootScan)** – tag et foto lige ovenfra af foden med et
+   **referencekort** (fx sygesikringskort) ved siden af. Appen bruger computer
+   vision (OpenCV.js) til at:
+   - finde referencekortet og dermed den rigtige **målestok** (mm pr. pixel),
+   - segmentere foden og udtrække dens **rigtige omrids**,
+   - måle **længde og bredde** automatisk,
+   - (valgfrit) analysere et **fodaftryk** og beregne svangindekset
+     (Chippaux-Smirak) → klassificere flad/normal/høj svang.
+3. **Mål** – felterne udfyldes automatisk fra scanningen (kan altid rettes):
+   fodlængde, fodbredde, svangtype, svangstøtte, hælkop osv.
+4. **Generér** – der bygges en ortopædisk sål formet efter fodens **faktiske
+   omrids**, med medial svangstøtte, dyb hælkop og mellemfodsstøtte. Geometrien
+   er lukket (watertight), så STL'en kan slices direkte.
+5. **Send/Download** – STL'en (+ video + scan-fotos) sendes til din mail, eller
+   hentes lokalt.
 
-> **Ærlig forventningsafstemning:** Dette er *ikke* en præcis 3D-rekonstruktion
-> af foden fra videoen (ægte fotogrammetri kræver tung billedbehandling/ML).
-> Sålen genereres ud fra de indtastede mål, og videoen er en visuel reference.
-> Det giver i praksis en god, brugbar støttesål – især for platfod.
+> **Ærlig forventningsafstemning:** Dette er ikke en fuld fotogrammetrisk 3D-
+> rekonstruktion (det kræver LiDAR eller en tung GPU-server). I stedet *måles*
+> foden automatisk fra billeder med et referenceobjekt for skala — i praksis
+> samme tilgang som de fleste "scan din fod"-apps. Resultatet vises som overlay
+> på fotoet, så du kan tjekke det, og alle mål kan finjusteres manuelt bagefter.
+
+### Tips til et godt scan-foto
+
+- Skyd **lige ovenfra**, så lidt forvrængning som muligt.
+- Læg referencekortet **fladt** i samme plan som foden (på gulvet/papiret).
+- God, jævn belysning og **kontrast** mellem fod og underlag (fx bar fod eller
+  mørk sok på lyst gulv/papir).
+- **Tæerne opad** i billedet, foden nogenlunde centreret.
+- Hvis kortet ikke findes automatisk, kan du **tappe dets 4 hjørner** i appen.
 
 ## Kom i gang
 
@@ -32,13 +62,20 @@ npm start
 
 Åbn derefter **http://localhost:3000**.
 
-### Brug på telefon (anbefales til kamera)
+### Brug fra telefon (anbefalet) – læg appen online
 
-Kør serveren på din computer og åbn `http://<computerens-ip>:3000` på
-telefonen (samme netværk). Bemærk: browserens kamera kræver ofte **HTTPS**
-eller `localhost`. Den nemmeste vej er at hoste appen et sted med HTTPS,
-eller bruge en tunnel (fx `ngrok http 3000`) når du tester på telefon.
-Man kan altid bruge "upload en video" i stedet for live-optagelse.
+Hele forløbet (film, foto, upload) kan klares på en telefon, men appen skal
+køre på en **HTTPS-adresse**, før telefonens kamera/upload virker. Nemmest med
+gratis hosting på **Render.com** – repoet indeholder en `render.yaml`:
+
+1. Opret konto på https://render.com → **New +** → **Blueprint** → vælg dette repo.
+2. Render læser `render.yaml` og opretter servicen. Udfyld `SMTP_USER` og
+   `SMTP_PASS` i dashboardet.
+3. Åbn den genererede `https://…onrender.com`-adresse på telefonen.
+
+Vil du teste fra telefon mod din egen computer i stedet, kan du lave en tunnel:
+`npx ngrok http 3000`. Upload-knapperne (video/foto) åbner telefonens kamera, så
+man kan optage og uploade i én handling.
 
 ## Mail-opsætning (så STL'en sendes automatisk)
 

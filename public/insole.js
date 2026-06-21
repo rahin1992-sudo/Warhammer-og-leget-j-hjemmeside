@@ -115,16 +115,48 @@ export function buildInsoleGeometry(params, mirror = false) {
   const indices = [];
 
   const L = p.length;
-  const halfMaxW = (p.width / 2);
+  const halfMaxW = p.width / 2;
+
+  // Et skannet omrids skaleres så dets bredeste sted matcher den (evt. manuelt
+  // rettede) bredde i p.width. Dermed virker bredde-feltet stadig efter et scan,
+  // og længden styres uændret af p.length via x = u * L.
+  if (p.outline) {
+    let maxW = 0;
+    for (let i = 0; i < p.outline.medial.length; i++) {
+      maxW = Math.max(maxW, p.outline.medial[i] - p.outline.lateral[i]);
+    }
+    if (maxW > 1e-6) {
+      const f = p.width / maxW;
+      if (Math.abs(f - 1) > 1e-6) {
+        p.outline = {
+          medial: p.outline.medial.map((v) => v * f),
+          lateral: p.outline.lateral.map((v) => v * f),
+        };
+      }
+    }
+  }
+
+  // Kant-funktion: giver lateral (v=0) og medial (v=1) y-koordinat i mm.
+  // Hvis der er et skannet omrids bruges det; ellers det symmetriske profil.
+  function edges(u) {
+    if (p.outline) {
+      return {
+        lateral: sampleArray(p.outline.lateral, u),
+        medial: sampleArray(p.outline.medial, u),
+      };
+    }
+    const halfW = halfMaxW * widthFraction(u);
+    return { lateral: -halfW, medial: halfW };
+  }
 
   // Topfladens punkter.
   for (let i = 0; i <= Nu; i++) {
     const u = i / Nu;
     const x = u * L;
-    const halfW = halfMaxW * widthFraction(u);
+    const e = edges(u);
     for (let j = 0; j <= Nv; j++) {
       const v = j / Nv;
-      let y = (2 * v - 1) * halfW;
+      let y = e.lateral + (e.medial - e.lateral) * v;
       const z = topHeight(u, v, p);
       if (mirror) y = -y;
       positions.push(x, y, z);
@@ -137,10 +169,10 @@ export function buildInsoleGeometry(params, mirror = false) {
   for (let i = 0; i <= Nu; i++) {
     const u = i / Nu;
     const x = u * L;
-    const halfW = halfMaxW * widthFraction(u);
+    const e = edges(u);
     for (let j = 0; j <= Nv; j++) {
       const v = j / Nv;
-      let y = (2 * v - 1) * halfW;
+      let y = e.lateral + (e.medial - e.lateral) * v;
       if (mirror) y = -y;
       positions.push(x, y, 0);
     }
@@ -213,8 +245,28 @@ export function normalizeParams(input) {
     cradle: clamp(num(input.cradle, 2.5), 0, 8),
     minThickness: 1.6,
     archType,
+    outline: validateOutline(input.outline),
   };
   return p;
+}
+
+// Et skannet omrids skal have to lige lange arrays (lateral/medial) i mm,
+// samplet jævnt fra hæl (u=0) til tå (u=1). Ellers ignoreres det.
+function validateOutline(o) {
+  if (!o || !Array.isArray(o.lateral) || !Array.isArray(o.medial)) return null;
+  if (o.lateral.length < 3 || o.lateral.length !== o.medial.length) return null;
+  if (o.lateral.some((v) => !Number.isFinite(v)) || o.medial.some((v) => !Number.isFinite(v))) return null;
+  return o;
+}
+
+// Lineær interpolation i et jævnt samplet array over u = 0..1.
+function sampleArray(arr, u) {
+  const n = arr.length - 1;
+  const t = Math.min(1, Math.max(0, u)) * n;
+  const i = Math.floor(t);
+  if (i >= n) return arr[n];
+  const f = t - i;
+  return arr[i] * (1 - f) + arr[i + 1] * f;
 }
 
 function num(x, fallback) {

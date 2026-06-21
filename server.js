@@ -46,7 +46,7 @@ function measurementsToText(m) {
 }
 
 // Gemmer ordren lokalt som fallback (eller altid, så du har en kopi).
-function saveLocally(stlBuf, videoFile, measurements) {
+function saveLocally(stlBuf, videoFile, photoFiles, measurements) {
   const dir = path.join(__dirname, "orders");
   fs.mkdirSync(dir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
@@ -57,6 +57,10 @@ function saveLocally(stlBuf, videoFile, measurements) {
     const ext = (videoFile.mimetype.split("/")[1] || "webm").replace(/[^a-z0-9]/gi, "");
     fs.writeFileSync(`${base}.${ext}`, videoFile.buffer);
   }
+  photoFiles.forEach((p, i) => {
+    const ext = (p.mimetype.split("/")[1] || "jpg").replace(/[^a-z0-9]/gi, "");
+    fs.writeFileSync(`${base}_scan${i + 1}.${ext}`, p.buffer);
+  });
   return base;
 }
 
@@ -65,11 +69,13 @@ app.post(
   upload.fields([
     { name: "stl", maxCount: 1 },
     { name: "video", maxCount: 1 },
+    { name: "photos", maxCount: 4 },
   ]),
   async (req, res) => {
     try {
       const stlFile = req.files?.stl?.[0];
       const videoFile = req.files?.video?.[0];
+      const photoFiles = req.files?.photos || [];
       if (!stlFile) return res.status(400).json({ ok: false, error: "Mangler STL-fil." });
 
       let measurements = {};
@@ -79,7 +85,7 @@ app.post(
         measurements = {};
       }
 
-      const savedBase = saveLocally(stlFile.buffer, videoFile, measurements);
+      const savedBase = saveLocally(stlFile.buffer, videoFile, photoFiles, measurements);
 
       const to = process.env.ORDER_EMAIL_TO || "rahin1992@gmail.com";
       const from = process.env.ORDER_EMAIL_FROM || "indlaegssaal-app@example.com";
@@ -110,6 +116,14 @@ app.post(
           contentType: videoFile.mimetype || "video/webm",
         });
       }
+      photoFiles.forEach((p, i) => {
+        const ext = (p.mimetype.split("/")[1] || "jpg").replace(/[^a-z0-9]/gi, "");
+        attachments.push({
+          filename: `scan-${i + 1}.${ext}`,
+          content: p.buffer,
+          contentType: p.mimetype || "image/jpeg",
+        });
+      });
 
       await transport.sendMail({
         from,
