@@ -12,8 +12,13 @@ den via et link). Det beskrives i Del 1.
 ## Del 1: Læg appen online (én gang) – så den kan bruges fra telefon
 
 For at telefonens kamera/upload virker, skal appen køre på en adresse med
-**HTTPS**. Den nemmeste vej er gratis hosting på **Render.com** (repoet
-indeholder allerede en `render.yaml`, så det er næsten automatisk):
+**HTTPS**. Den nemmeste vej er gratis hosting på **Render.com**.
+
+**Nemmest (ét klik):** Åbn README'en på GitHub og tryk på den blå
+**"Deploy to Render"**-knap. Log ind med GitHub, klik dig igennem, og Render
+bygger appen automatisk.
+
+Eller manuelt:
 
 1. Sørg for at koden er på GitHub (det er den allerede).
 2. Opret en gratis konto på https://render.com.
@@ -23,6 +28,9 @@ indeholder allerede en `render.yaml`, så det er næsten automatisk):
    `SMTP_USER` og `SMTP_PASS`.
 5. Når den er deployet, får du en URL som `https://tpu-indlaegssaal.onrender.com`.
    **Åbn den URL på telefonen** (gem den evt. på hjemmeskærmen) – så er I klar.
+
+> Første gang appen åbnes efter en pause kan den være ~30 sek. om at "vågne"
+> (gratis-planen). Appen viser selv en besked om det – det er ikke en fejl.
 
 > _Indsæt skærmbillede af appen åbnet på telefonen her._
 

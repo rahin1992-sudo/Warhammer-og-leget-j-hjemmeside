@@ -7,6 +7,17 @@ nogle mål, ser en 3D-forhåndsvisning, og får en **STL-fil** sendt til mail
 
 > 👉 Trin-for-trin guide til daglig brug: se **[BRUGSVEJLEDNING.md](BRUGSVEJLEDNING.md)**.
 
+## 🚀 Læg appen online med ét klik (anbefalet – kræver ikke GitHub-viden)
+
+Tryk på knappen, log ind med GitHub, og følg trinnene. Render bygger appen
+automatisk og giver dig et `https://…onrender.com`-link, du kan åbne på telefonen:
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/rahin1992-sudo/Warhammer-og-leget-j-hjemmeside)
+
+Til sidst skal du udfylde to felter i Render (så mailen kan sendes):
+`SMTP_USER` (din Gmail) og `SMTP_PASS` (et Gmail App Password – se afsnittet
+"Mail-opsætning" nedenfor).
+
 ## Sådan virker det
 
 1. **Video** (valgfrit) – en kort video af foden der sendes med som reference.

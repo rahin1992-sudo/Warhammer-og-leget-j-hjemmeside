@@ -285,6 +285,13 @@ $("sendBtn").addEventListener("click", async () => {
   btn.disabled = true;
   setResult("Genererer og sender…", "busy");
 
+  // På gratis hosting kan serveren "sove" – vis en venlig besked hvis det
+  // trækker ud, så ventetiden ikke ligner en fejl.
+  const wakeTimer = setTimeout(
+    () => setResult("Serveren vågner op – det kan tage op til ~30 sek. første gang. Vent venligst…", "busy"),
+    4000
+  );
+
   try {
     const stlBlob = exportStlBlob();
     const params = readParams();
@@ -301,6 +308,7 @@ $("sendBtn").addEventListener("click", async () => {
     });
 
     const res = await fetch("/api/order", { method: "POST", body: fd });
+    clearTimeout(wakeTimer);
     const data = await res.json();
     if (!res.ok || !data.ok) throw new Error(data.error || "Serverfejl");
 
@@ -312,6 +320,7 @@ $("sendBtn").addEventListener("click", async () => {
   } catch (err) {
     setResult("❌ Kunne ikke sende: " + err.message + " — prøv 'Download STL' i stedet.", "err");
   } finally {
+    clearTimeout(wakeTimer);
     btn.disabled = false;
   }
 });
